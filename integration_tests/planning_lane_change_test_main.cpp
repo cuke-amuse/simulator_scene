@@ -16,17 +16,45 @@
 using apollo::cyber::Clock;
 using namespace apollo::planning;
 
-
+using namespace std;
 int main(int argc, char* argv[]) 
 {
+    std::string input_file;
+    std::string seq_num = "3"; 
     // init cyber framework
-    apollo::cyber::Init(argv[0]);
+       char opt;
+        while((opt = getopt(argc, argv, "hi:t:n:o:")) != -1) {
+        switch(opt) {
+            case 'h':
+                printf("Usage: ./FileEnDeCryptor -i <InputFile> -t <E/D> -n <Num> -o <OutFile>\n");
+                return 0;
+            case 'i':
+                input_file = string(optarg);
+                break;
+            case 't':
+                if (!strcmp("E", optarg)) {
+                    //option_type = TYPE_ENCRYPT;
+                } else if (!strcmp("D", optarg)) {
+                   // option_type = TYPE_DECRYPT;
+                } else {
+                    printf("Error: Option type must be E or D!\n");
+                    return -1;
+                }
+                break;
+            case 'n':
+                //process_num = atoi(optarg);
+                seq_num = string(optarg);
+                break;
+        }
+    }
+
+    apollo::cyber::Init("planning intergration test");
     PlanningTestBase test_base;
     test_base.SetUpTestCase();
     FLAGS_use_navigation_mode = false;
     FLAGS_map_dir = "/apollo/modules/map/data/sunnyvale_loop";
     FLAGS_test_base_map_filename = "base_map_test.bin";
-    FLAGS_test_data_dir = "/apollo/modules/planning/testdata/sunnyvale_loop_test";
+    FLAGS_test_data_dir = "/apollo/modules/planning/testdata/" + input_file ;
 
     FLAGS_planning_upper_speed_limit = 12.5;
     FLAGS_use_multi_thread_to_add_obstacles = false;
@@ -37,9 +65,7 @@ int main(int argc, char* argv[])
 
     test_base.rule_enabled_[TrafficRuleConfig::CROSSWALK] = false;
 
-    //test_case_one  lane_change
-
-    std::string seq_num = "3";
+    std::cout << "input file" << input_file << "/" << FLAGS_test_data_dir << "test seq:" << seq_num << std::endl;
     FLAGS_test_routing_response_file = seq_num + "_routing.pb.txt";
     FLAGS_test_prediction_file = seq_num + "_prediction.pb.txt";
     FLAGS_test_localization_file = seq_num + "_localization.pb.txt";
