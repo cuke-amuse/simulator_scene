@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
     std::string seq_num = "3"; 
     // init cyber framework
        char opt;
+       int trafficOption = 0;
         while((opt = getopt(argc, argv, "hi:t:n:o:")) != -1) {
         switch(opt) {
             case 'h':
@@ -32,14 +33,10 @@ int main(int argc, char* argv[])
                 input_file = string(optarg);
                 break;
             case 't':
-                if (!strcmp("E", optarg)) {
-                    //option_type = TYPE_ENCRYPT;
-                } else if (!strcmp("D", optarg)) {
-                   // option_type = TYPE_DECRYPT;
-                } else {
-                    printf("Error: Option type must be E or D!\n");
-                    return -1;
-                }
+                trafficOption = atoi(optarg);
+                std::cout << "enable trafficOpt:" << trafficOption << std::endl;
+                break;
+                case 'o':
                 break;
             case 'n':
                 //process_num = atoi(optarg);
@@ -68,7 +65,15 @@ int main(int argc, char* argv[])
     FLAGS_enable_scenario_traffic_light = false;
     FLAGS_enable_rss_info = false;
 
-    test_base.rule_enabled_[TrafficRuleConfig::CROSSWALK] = false;
+    if (trafficOption == 0) {
+        test_base.rule_enabled_[TrafficRuleConfig::CROSSWALK] = false;
+         test_base.rule_enabled_[TrafficRuleConfig::KEEP_CLEAR] = false;
+          test_base.rule_enabled_[TrafficRuleConfig::TRAFFIC_LIGHT] = false;
+    } else {
+        test_base.rule_enabled_[TrafficRuleConfig::CROSSWALK] = true;
+         test_base.rule_enabled_[TrafficRuleConfig::KEEP_CLEAR] = true;
+          test_base.rule_enabled_[TrafficRuleConfig::TRAFFIC_LIGHT] = true;
+    }
 
     std::cout << "input file:" << input_file << ":" << FLAGS_test_data_dir << " [ test seq:]" << seq_num << std::endl;
     FLAGS_test_routing_response_file = seq_num + "_routing.pb.txt";
