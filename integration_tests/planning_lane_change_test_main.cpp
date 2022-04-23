@@ -52,8 +52,13 @@ int main(int argc, char* argv[])
     PlanningTestBase test_base;
     test_base.SetUpTestCase();
     FLAGS_use_navigation_mode = false;
-    FLAGS_map_dir = "/apollo/modules/map/data/sunnyvale_loop";
-    FLAGS_test_base_map_filename = "base_map_test.bin";
+    if (input_file == "sunnyvale_loop_test") {
+        FLAGS_map_dir = "/apollo/modules/map/data/sunnyvale_loop" ;
+        FLAGS_test_base_map_filename = "base_map_test.bin";
+    } else {
+        FLAGS_map_dir = "/apollo/modules/map/data/sunnyvale_big_loop" ;
+        FLAGS_test_base_map_filename = "base_map.bin";
+    }
     FLAGS_test_data_dir = "/apollo/modules/planning/testdata/" + input_file ;
 
     FLAGS_planning_upper_speed_limit = 12.5;
@@ -65,7 +70,7 @@ int main(int argc, char* argv[])
 
     test_base.rule_enabled_[TrafficRuleConfig::CROSSWALK] = false;
 
-    std::cout << "input file" << input_file << "/" << FLAGS_test_data_dir << "test seq:" << seq_num << std::endl;
+    std::cout << "input file:" << input_file << ":" << FLAGS_test_data_dir << " [ test seq:]" << seq_num << std::endl;
     FLAGS_test_routing_response_file = seq_num + "_routing.pb.txt";
     FLAGS_test_prediction_file = seq_num + "_prediction.pb.txt";
     FLAGS_test_localization_file = seq_num + "_localization.pb.txt";

@@ -264,14 +264,14 @@ bool PlanningTestBase::RunPlanning(const std::string& test_case_name,
   planning_->RunOnce(local_view_, &adc_trajectory_pb);
   int i = 10;
   while (apollo::cyber::OK()) {
-#if 0
+#if 1
     planning_->RunOnce(local_view_, &adc_trajectory_pb);
     local_view_.localization_estimate->mutable_pose()->mutable_position()->set_x(adc_trajectory_pb.trajectory_point().at(i).path_point().x());
     local_view_.localization_estimate->mutable_pose()->mutable_position()->set_y(adc_trajectory_pb.trajectory_point().at(i).path_point().y());
     local_view_.localization_estimate->mutable_pose()->set_heading(adc_trajectory_pb.trajectory_point().at(i).path_point().theta());
-    local_view_.chassis->set_speed_mps(adc_trajectory_pb.trajectory_point().at(i).v());
     local_view_.localization_estimate->mutable_header()->set_timestamp_sec(Clock::NowInSeconds());
     local_view_.chassis->mutable_header()->set_timestamp_sec(Clock::NowInSeconds());
+    local_view_.chassis->set_speed_mps(adc_trajectory_pb.trajectory_point().at(i).v());
 #endif
     localization_writer->Write(local_view_.localization_estimate);
     planning_writer->Write(adc_trajectory_pb);
